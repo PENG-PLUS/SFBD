@@ -38,7 +38,7 @@ detail:
         --bufsize               指定接受消息的缓冲区大小（字节），默认为51800
         --log                   开启命令日志并指定日志文件名  
         
-截屏  
+截屏：  
 ![screen](https://github.com/PENG-PLUS/SFBD/blob/main/screen.jpg)
 
 # 主要功能  
