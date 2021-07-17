@@ -18,6 +18,7 @@ Backdoor  后渗透工具
 * 篡改程序/快捷方式图标
 
 # 反病毒扫描
+[这是链接](https://www.virustotal.com/gui/file/84ecedcdd1efee0b07d52419c9968c5614006b15f6f186a2c26b69877675a238/detection)
 ![scan](https://github.com/PENG-PLUS/SFBD/blob/main/scan.jpg)
 
 # 使用
