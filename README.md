@@ -27,23 +27,14 @@ usage: SFBD.exe [-h] [--server/--client] <--option>
 detail:  
 
         --server                开启服务端模式  
-        
         --client                开启客户端模式
-        
         --listen-port           修改服务端模式下的监听端口，默认为5180
-        
         --max-conn              修改服务端模式下会话的最大连接数，默认为10
-        
         --host                  指定服务端IP用于连接，默认127.0.0.1
-        
         --conn-port             指定服务端的端口号用于连接，默认5180
-        
         --enc-mode <rc4/rot>    指定通信加密模式，默认为rc4
-        
         --passwd                指定通信加密时使用的密钥，默认为backdoor
-        
         --bufsize               指定接受消息的缓冲区大小（字节），默认为51800
-        
         --log                   开启命令日志并指定日志文件名，默认为SFBD.log
         
 # 主要功能  
