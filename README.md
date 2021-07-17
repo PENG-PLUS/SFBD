@@ -19,5 +19,5 @@ Backdoor  后渗透工具
 
 
 # 反病毒扫描
-
+![scan](https://github.com/PENG-PLUS/SFBD/blob/main/scan.jpg)
 
