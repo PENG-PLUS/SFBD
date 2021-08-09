@@ -1,10 +1,10 @@
 #include "public.h"
 #include "controller.hpp"
 
-bool Config::enable_log = true;
+bool Config::enable_log = false;
 string Config::key = "backdoor";
 string Config::encry_mode = "rc4";
-string Config::logfile = "SFBD.history";
+string Config::logfile = "";
 
 
 int main(int argc, char* argv[]) {
